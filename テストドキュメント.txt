@@ -8,4 +8,3 @@ github proj #6
 1045
 
 close #15 課題完了
-
