@@ -1,81 +1,107 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>加速度センサーのサンプル</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        #sensor-data {
-            font-family: 'Monospace', monospace; /* Use monospace font for data display */
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加速度センサーテスト</title>
+<style>
+  body { font-family: sans-serif; padding: 1em; }
+  #permissionButton { padding: 1em; font-size: 1em; margin-bottom: 1em; }
+  #data { white-space: pre-wrap; font-family: monospace; }
+</style>
 </head>
-<body class="bg-gray-100 flex justify-center items-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-md text-center w-4/5 max-w-md">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-6">加速度センサーのサンプル</h1>
-        <div id="sensor-status" class="mb-4 text-gray-600">センサーの状態: 初期化中...</div>
-        <div id="sensor-data" class="bg-gray-200 rounded-md p-4 mb-6 text-left">
-            <p class="text-gray-700"><span class="font-semibold">X:</span> <span id="x-value">0.00</span> m/s²</p>
-            <p class="text-gray-700"><span class="font-semibold">Y:</span> <span id="y-value">0.00</span> m/s²</p>
-            <p class="text-gray-700"><span class="font-semibold">Z:</span> <span id="z-value">0.00</span> m/s²</p>
-        </div>
-        <button id="start-sensor" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">センサー開始</button>
-        <button id="stop-sensor" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out mt-2" style="display: none;">センサー停止</button>
-    </div>
+<body>
 
-    <script>
-        let sensor = null;
-        let sensorStatus = document.getElementById('sensor-status');
-        let startButton = document.getElementById('start-sensor');
-        let stopButton = document.getElementById('stop-sensor');
-        let xValue = document.getElementById('x-value');
-        let yValue = document.getElementById('y-value');
-        let zValue = document.getElementById('z-value');
+<h1>加速度センサーテスト (iOS対応)</h1>
 
-        function updateSensorData(x, y, z) {
-            xValue.textContent = x.toFixed(2);
-            yValue.textContent = y.toFixed(2);
-            zValue.textContent = z.toFixed(2);
-        }
+<button id="permissionButton">センサーへのアクセスを許可</button>
 
-        function startSensor() {
-            if ('Accelerometer' in window) {
-                sensor = new Accelerometer({ frequency: 60 }); // Update at 60Hz
-                sensor.onreading = () => {
-                    updateSensorData(sensor.x, sensor.y, sensor.z);
-                };
-                sensor.onerror = event => {
-                    sensorStatus.textContent = 'センサーエラー: ' + event.error.message;
-                };
-                sensor.start();
-                sensorStatus.textContent = 'センサーがアクティブです';
-                startButton.style.display = 'none';
-                stopButton.style.display = 'inline-block';
-            } else {
-                sensorStatus.textContent = '加速度センサーはサポートされていません';
-            }
-        }
+<div id="status">許可待ち...</div>
+<div id="data">
+  加速度 (重力込み):<br>
+  x: <span id="acc-gx">0</span><br>
+  y: <span id="acc-gy">0</span><br>
+  z: <span id="acc-gz">0</span><br>
+  <hr>
+  加速度 (重力除く):<br>
+  x: <span id="acc-x">0</span><br>
+  y: <span id="acc-y">0</span><br>
+  z: <span id="acc-z">0</span><br>
+</div>
 
-        function stopSensor() {
-            if (sensor) {
-                sensor.stop();
-                sensor = null;
-                sensorStatus.textContent = 'センサーが停止しました';
-                startButton.style.display = 'inline-block';
-                stopButton.style.display = 'none';
-                updateSensorData(0, 0, 0); // Reset displayed values
-            }
-        }
+<script>
+  const permissionButton = document.getElementById('permissionButton');
+  const statusDiv = document.getElementById('status');
+  const accGxSpan = document.getElementById('acc-gx');
+  const accGySpan = document.getElementById('acc-gy');
+  const accGzSpan = document.getElementById('acc-gz');
+  const accXSpan = document.getElementById('acc-x');
+  const accYSpan = document.getElementById('acc-y');
+  const accZSpan = document.getElementById('acc-z');
 
-        startButton.addEventListener('click', startSensor);
-        stopButton.addEventListener('click', stopSensor);
-    </script>
+  // iOS 13以降のSafari向けパーミッションリクエスト関数
+  function requestDeviceMotionEventPermission() {
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      // iOS 13+ の Safari
+      DeviceMotionEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === 'granted') {
+            statusDiv.textContent = '許可されました。デバイスを動かしてください。';
+            window.addEventListener('devicemotion', handleMotionEvent);
+          } else {
+            statusDiv.textContent = '許可されませんでした。';
+          }
+          permissionButton.style.display = 'none'; // ボタンを隠す
+        })
+        .catch(error => {
+           statusDiv.textContent = 'エラーが発生しました: ' + error;
+           console.error(error);
+        });
+    } else {
+      // iOS 13未満、またはSafari以外 (通常は許可不要 or 別の方法)
+      statusDiv.textContent = 'このブラウザでは直接許可リクエストは不要か、サポートされていません。デバイスを動かしてください。';
+      window.addEventListener('devicemotion', handleMotionEvent);
+      permissionButton.style.display = 'none'; // ボタンを隠す
+    }
+  }
+
+  // 加速度センサーのデータを処理する関数
+  function handleMotionEvent(event) {
+    // 重力込み加速度
+    if (event.accelerationIncludingGravity) {
+      accGxSpan.textContent = event.accelerationIncludingGravity.x?.toFixed(3) ?? 'N/A';
+      accGySpan.textContent = event.accelerationIncludingGravity.y?.toFixed(3) ?? 'N/A';
+      accGzSpan.textContent = event.accelerationIncludingGravity.z?.toFixed(3) ?? 'N/A';
+    }
+
+    // 重力除く加速度
+    if (event.acceleration) {
+      accXSpan.textContent = event.acceleration.x?.toFixed(3) ?? 'N/A';
+      accYSpan.textContent = event.acceleration.y?.toFixed(3) ?? 'N/A';
+      accZSpan.textContent = event.acceleration.z?.toFixed(3) ?? 'N/A';
+    }
+  }
+
+  // ボタンがクリックされたらパーミッションをリクエスト
+  permissionButton.addEventListener('click', requestDeviceMotionEventPermission);
+
+  // --- 初期状態の確認 (参考) ---
+  // もし既に許可されていれば、ページ読み込み時にリスナーを追加することも可能
+  // ただし、ユーザーアクションなしでの自動開始は推奨されない場合が多い
+  /*
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      DeviceMotionEvent.requestPermission().then(permissionState => {
+          if (permissionState === 'granted') {
+              // 既に許可されている場合の処理（例：リスナー追加）
+              // window.addEventListener('devicemotion', handleMotionEvent);
+              // statusDiv.textContent = '既に許可されています。';
+              // permissionButton.style.display = 'none';
+          }
+      });
+  }
+  */
+
+</script>
+
 </body>
 </html>
