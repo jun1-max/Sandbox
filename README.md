@@ -1,5 +1,7 @@
 # Sandbox
 
+<a href="https://jun1-max.github.io/Sandbox/">docs</a>
+
 !!! ためになる !!!
 
 ””” ためになる """
