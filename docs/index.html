@@ -1,14 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="utf-8">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デバイスセンサー情報</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .data-container { margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .data-container h2 { margin-top: 0; }
+        .value { font-weight: bold; }
+        #error-log { color: red; margin-top: 20px; }
+        button { padding: 10px 15px; font-size: 16px; cursor: pointer; }
+    </style>
 </head>
 <body>
-<h1>
-    <a href="./Accelerometer.html">加速度センサー</a><br>
-    <a href="./GPS.html">GPS</a><br>
-</h1>
+    <h1>デバイスセンサー情報</h1>
 
+    <button id="start-sensors">センサーを開始</button>
+
+    <div class="data-container">
+        <h2>位置情報 (GPS)</h2>
+        <p>緯度: <span id="latitude" class="value">---</span></p>
+        <p>経度: <span id="longitude" class="value">---</span></p>
+        <p>GPS精度: <span id="accuracy" class="value">---</span> m</p>
+        <p>高度: <span id="altitude" class="value">---</span> m</p>
+        <p>高度精度: <span id="altitudeAccuracy" class="value">---</span> m</p>
+        <p>移動速度: <span id="speed" class="value">---</span> m/s</p>
+        <p>移動方角: <span id="heading-gps" class="value">---</span> °</p>
+    </div>
+
+    <div class="data-container">
+        <h2>デバイスの向き (方角)</h2>
+        <p>方角 (Alpha): <span id="alpha" class="value">---</span> °</p>
+        <p>傾き (Beta): <span id="beta" class="value">---</span> °</p>
+        <p>回転 (Gamma): <span id="gamma" class="value">---</span> °</p>
+        <p>絶対的な向き: <span id="absolute" class="value">---</span></p>
+        <p>コンパス方角 (webkitCompassHeading): <span id="webkit-heading" class="value">---</span> °</p>
+    </div>
+
+    <div class="data-container">
+        <h2>加速度</h2>
+        <p>X軸 (左右): <span id="accel-x" class="value">---</span> m/s²</p>
+        <p>Y軸 (前後): <span id="accel-y" class="value">---</span> m/s²</p>
+        <p>Z軸 (上下): <span id="accel-z" class="value">---</span> m/s²</p>
+        <h2>加速度 (重力含む)</h2>
+        <p>X軸 (重力含む): <span id="accel-gx" class="value">---</span> m/s²</p>
+        <p>Y軸 (重力含む): <span id="accel-gy" class="value">---</span> m/s²</p>
+        <p>Z軸 (重力含む): <span id="accel-gz" class="value">---</span> m/s²</p>
+        <h2>回転速度</h2>
+        <p>Alpha (Z軸周り): <span id="rotation-alpha" class="value">---</span> °/s</p>
+        <p>Beta (X軸周り): <span id="rotation-beta" class="value">---</span> °/s</p>
+        <p>Gamma (Y軸周り): <span id="rotation-gamma" class="value">---</span> °/s</p>
+    </div>
+
+    <div id="error-log"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
