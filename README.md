@@ -6,28 +6,6 @@
 <a href="https://jun1-max.github.io/Sandbox/GPS.html">GPS</a><br>
 </h3>
 
-!!! ためになる !!!
+[![Run Workflow](https://img.shields.io/badge/Run%20Workflow-Click%20Me-brightgreen)](https://github.com/YOUR_USERNAME/YOUR_REPOSITORY/actions/workflows/create-user-branch.yml)
 
-””” ためになる """
-
-$$$ ためになる $$$
-
-%%% ためになる %%%
-
-&&& ためになる &&&
-
-''' ためになる '''
-
-((( ためになる (((
-
-))) ためになる )))
-
-=== ためになる ===
-
-~~~ ためになる ~~~
-
-||| ためになる |||
-
-[[[ ためになる ]]]
-
- 
+**手順:** 上のボタンをクリックして、ワークフローのページに移動し、あなたの GitHub ユーザ名を入力して実行してください。
