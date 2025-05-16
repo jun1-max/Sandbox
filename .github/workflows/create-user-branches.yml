@@ -1,0 +1,41 @@
+name: Create User Branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      usernames:
+        description: '作成するブランチのユーザ名（カンマ区切り）'
+        required: true
+        type: string
+      base_branch:
+        description: 'コピー元のブランチ名'
+        required: true
+        default: 'training' # 研修用ブランチ名を指定 (例: training)
+
+jobs:
+  create_branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 全履歴を取得
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Create and push user branches
+        run: |
+          BASE_BRANCH="${{ github.event.inputs.base_branch }}"
+          USERNAMES="${{ github.event.inputs.usernames }}"
+          IFS=',' read -ra USERS <<< "$USERNAMES"
+
+          for USER in "${USERS[@]}"; do
+            BRANCH_NAME=$(echo "$USER" | tr -d ' ') # 空白を削除
+            git checkout "$BASE_BRANCH"
+            git checkout -b "$BRANCH_NAME"
+            git push origin "$BRANCH_NAME"
+          done
