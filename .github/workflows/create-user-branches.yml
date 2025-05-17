@@ -38,7 +38,6 @@ jobs:
 
           for USER in "${USERS[@]}"; do
             BRANCH_NAME=$(echo "$USER" | tr -d ' ') # 空白を削除
-            git checkout "$BASE_BRANCH"
-            git checkout -b "$BRANCH_NAME"
+            git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
             git push origin "$BRANCH_NAME"
           done
