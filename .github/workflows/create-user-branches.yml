@@ -1,4 +1,7 @@
 name: Create User Branches
+# リポジトリの Settings
+# 左側のメニューから Actions > General 
+# Workflow permissions を Read and write permissions にする
 
 on:
   workflow_dispatch:
