@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       usernames:
-        description: 'ì¬‚·‚éƒuƒ‰ƒ“ƒ`‚Ìƒ†[ƒU–¼iƒJƒ“ƒ}‹æØ‚èj'
+        description: 'ä½œæˆã™ã‚‹ãƒ–ãƒ©ãƒ³ãƒã®ãƒ¦ãƒ¼ã‚¶åï¼ˆã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šï¼‰'
         required: true
         type: string
       base_branch:
-        description: 'ƒRƒs[Œ³‚Ìƒuƒ‰ƒ“ƒ`–¼'
+        description: 'ã‚³ãƒ”ãƒ¼å…ƒã®ãƒ–ãƒ©ãƒ³ãƒå'
         required: true
-        default: 'training' # Œ¤C—pƒuƒ‰ƒ“ƒ`–¼‚ğw’è (—á: training)
+        default: 'training' # ç ”ä¿®ç”¨ãƒ–ãƒ©ãƒ³ãƒåã‚’æŒ‡å®š (ä¾‹: training)
 
 jobs:
   create_branches:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # ‘S—š—ğ‚ğæ“¾
+          fetch-depth: 0 # å…¨å±¥æ­´ã‚’å–å¾—
 
       - name: Set up Git user
         run: |
@@ -34,8 +34,7 @@ jobs:
           IFS=',' read -ra USERS <<< "$USERNAMES"
 
           for USER in "${USERS[@]}"; do
-            BRANCH_NAME=$(echo "$USER" | tr -d ' ') # ‹ó”’‚ğíœ
-            git checkout "$BASE_BRANCH"
-            git checkout -b "$BRANCH_NAME"
+            BRANCH_NAME=$(echo "$USER" | tr -d ' ') # ç©ºç™½ã‚’å‰Šé™¤
+            git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
             git push origin "$BRANCH_NAME"
           done
